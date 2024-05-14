@@ -31,10 +31,11 @@
 #ifndef FAM_CONFIG_INFO_H
 #define FAM_CONFIG_INFO_H
 
+#include "fam_internal_exception.h"
+
 #include <yaml-cpp/node/type.h>
 #include <yaml-cpp/yaml.h>
 
-#include "common/fam_internal_exception.h"
 #include <iostream>
 #include <map>
 #include <pwd.h>

@@ -29,11 +29,13 @@
  *
  */
 
-#include <iostream>
-#include <stdint.h>   // needed
+#include <cstdint>   // needed
 #include <sys/stat.h> // needed for mode_t
 
-#include "allocator/fam_allocator_client.h"
+#include "fam_allocator_client.h"
+#include "cis/fam_cis_client.h"
+#include "cis/fam_cis_direct.h"
+
 #ifdef USE_THALLIUM
 #include <cis/fam_cis_thallium_client.h>
 #include <common/fam_thallium_engine_helper.h>

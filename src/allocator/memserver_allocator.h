@@ -1,6 +1,6 @@
 /*
  * memserver_allocator.h
- * Copyright (c) 2020-2021,2023 Hewlett Packard Enterprise Development, LP. All
+ * Copyright (c) 2020-2024 Hewlett Packard Enterprise Development, LP. All
  * rights reserved. Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following conditions
  * are met:
@@ -31,12 +31,10 @@
 #ifndef MEMSERVER_ALLOCATOR_H_
 #define MEMSERVER_ALLOCATOR_H_
 
-#include <iostream>
 #include <pthread.h>
 #include <sys/types.h> // needed for mode_t
 #include <thread>
 
-#include <boost/atomic.hpp>
 #include <nvmm/error_code.h>
 #include <nvmm/global_ptr.h>
 #include <nvmm/heap.h>

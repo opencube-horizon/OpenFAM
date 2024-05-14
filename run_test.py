@@ -20,25 +20,34 @@
  #
  #
 
-import os
+import subprocess
 import sys
+import os
 
 openfam_test_exe=sys.argv[1]
+openfam_test_arg=""
+
 if len(sys.argv) > 2:
     openfam_test_arg=sys.argv[2]
-else:
-    openfam_test_arg=""
 
-command_line = os.environ["OPENFAM_TEST_COMMAND"] + " " + os.environ["OPENFAM_TEST_OPT"] + " " + openfam_test_exe + " " + openfam_test_arg
-print("Test Command : " + command_line)
-result = os.system(command_line)
+command_line = [
+    os.environ["OPENFAM_TEST_COMMAND"],
+    os.environ["OPENFAM_TEST_OPT"],
+    openfam_test_exe,
+    openfam_test_arg,
+]
+print("Test Command:", " ".join(command_line))
+
+result = subprocess.call(command_line)
+result >>= 8
+
 #If the return code from test is 77 return that back to gtest
 #so that the corresponding test can be skipped
-if (result >> 8) == 77:
-    sys.exit(result >> 8)
+if result == 77:
+    sys.exit(result)
 #Other non zero values implies that test has failed.
-elif (result >> 8) != 0:
+elif (result) != 0:
     sys.exit(1)
+
 #For success case return zero
-else:
-    sys.exit(0)
+sys.exit(0)
