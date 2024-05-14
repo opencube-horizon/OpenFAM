@@ -29,7 +29,7 @@
  *
  */
 
-#include "cis/fam_cis_client.h"
+#include "fam_cis_client.h"
 #include "common/atomic_queue.h"
 
 namespace openfam {

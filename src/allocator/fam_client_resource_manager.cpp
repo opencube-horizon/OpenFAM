@@ -29,7 +29,8 @@
  *
  */
 
-#include "allocator/fam_client_resource_manager.h"
+#include "fam_client_resource_manager.h"
+#include "cis/fam_cis_client.h"
 
 using namespace std;
 namespace openfam {

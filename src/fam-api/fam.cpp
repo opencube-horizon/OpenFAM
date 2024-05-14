@@ -28,9 +28,6 @@
  * See https://spdx.org/licenses/BSD-3-Clause
  *
  */
-#include <iostream>
-#include <sstream>
-#include <string>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -46,8 +43,12 @@
 #include "fam/fam.h"
 #include "fam/fam_exception.h"
 #include "pmi/fam_runtime.h"
+#ifdef FAM_HAVE_PMI2
 #include "pmi/runtime_pmi2.h"
+#endif
+#ifdef FAM_HAVE_PMIx
 #include "pmi/runtime_pmix.h"
+#endif
 #ifdef FAM_PROFILE
 #include "fam_counters.h"
 #endif
@@ -71,7 +72,6 @@
     (((uint64_t)(OFFSET)) % (BYTE_COUNT) == 0)
 
 #endif
-using namespace std;
 
 /**
  * List of Options supported by this OpenFAM implementation.
@@ -716,6 +716,7 @@ void fam::Impl_::fam_initialize(const char *grpName, Fam_Options *options) {
     } else {
         // Initialize PMI Runtime
         if (strcmp(famOptions.runtime, FAM_OPTIONS_RUNTIME_PMI2_STR) == 0) {
+#ifdef FAM_HAVE_PMI2
             // initialize PMI2
             famRuntime = new Pmi2_Runtime();
             if (PMI2_SUCCESS != (ret = famRuntime->runtime_init())) {
@@ -723,7 +724,12 @@ void fam::Impl_::fam_initialize(const char *grpName, Fam_Options *options) {
                 message << "Fam PMI2 Runtime initialization failed: " << ret;
                 THROW_ERR_MSG(Fam_Pmi_Exception, message.str().c_str());
             }
+#else
+              message << "Fam PMI2 support was not compiled in";
+              THROW_ERR_MSG(Fam_Pmi_Exception, message.str().c_str());
+#endif
         } else {
+#ifdef FAM_HAVE_PMIx
             // initialize PMIX
             famRuntime = new Pmix_Runtime();
             if (PMIX_SUCCESS != (ret = famRuntime->runtime_init())) {
@@ -731,6 +737,10 @@ void fam::Impl_::fam_initialize(const char *grpName, Fam_Options *options) {
                 message << "Fam PMIx Runtime initialization failed: " << ret;
                 THROW_ERR_MSG(Fam_Pmi_Exception, message.str().c_str());
             }
+#else
+              message << "Fam PMIx support was not compiled in";
+              THROW_ERR_MSG(Fam_Pmi_Exception, message.str().c_str());
+#endif
         }
         // Add PE_COUNT and PE_ID to optValueMap
 
