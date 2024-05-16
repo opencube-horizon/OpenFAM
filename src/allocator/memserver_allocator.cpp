@@ -31,7 +31,6 @@
 #include "memserver_allocator.h"
 #include "common/fam_memserver_profile.h"
 #include "common/fam_config_info.h"
-#include "cis/fam_cis.h"
 #include "common/atomic_queue.h"
 #include <dirent.h>
 #include <libgen.h>
