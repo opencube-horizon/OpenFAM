@@ -29,6 +29,7 @@
  *
  */
 
+#include <sstream>
 #include "fam_libfabric.h"
 #include "fam_context.h"
 #include "fam_internal.h"
