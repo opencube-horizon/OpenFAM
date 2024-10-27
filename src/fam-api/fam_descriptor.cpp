@@ -100,7 +100,6 @@ class Fam_Descriptor::FamDescriptorImpl_ {
     ~FamDescriptorImpl_() {
         gDescriptor = {FAM_INVALID_REGION, 0};
         context = NULL;
-        base_addr_list = NULL;
         desc_update_status = DESC_INVALID;
         size = 0;
         interleaveSize = 0;
@@ -113,6 +112,7 @@ class Fam_Descriptor::FamDescriptorImpl_ {
             free(keys);
         if (base_addr_list)
             free(base_addr_list);
+        base_addr_list = NULL;    
         used_memsrv_cnt = 0;
         uid = 0;
         gid = 0;
@@ -365,12 +365,15 @@ class Fam_Region_Descriptor::FamRegionDescriptorImpl_ {
 
     ~FamRegionDescriptorImpl_() {
         gDescriptor = {FAM_INVALID_REGION, 0};
-        context = NULL;
         desc_update_status = DESC_INVALID;
         size = 0;
         perm = 0;
-        name = NULL;
         permissionLevel = PERMISSION_LEVEL_DEFAULT;
+        if(name)
+        {
+            free(name);
+        }
+        context = NULL;
     }
 
     Fam_Global_Descriptor get_global_descriptor() { return this->gDescriptor; }
