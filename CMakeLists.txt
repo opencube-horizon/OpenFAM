@@ -168,7 +168,7 @@ set(cxx_flags
   $<$<AND:$<BOOL:${ENABLE_THALLIUM}>,$<CXX_COMPILER_ID:GNU>>:-fconcepts>
 )
 
-set(debug_flags -fsanitize=address -fsanitize=leak)
+set(debug_flags -g -O0 -fsanitize=address -fsanitize=leak)
 set(coverage_flags --coverage)
 
 add_compile_options(
