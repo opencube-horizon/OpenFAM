@@ -52,6 +52,19 @@ Fam_Client_Resource_Manager::~Fam_Client_Resource_Manager() {
         if (famResource)
             delete famResource;
     }
+    delete famClientResourceGarbageQ;
+
+    if(famResourceTable)
+    {
+        for (auto it = famResourceTable->begin();it != famResourceTable->end();++it) {
+            if(it->second)
+            {
+                delete it->second; 
+            }
+        }
+        famResourceTable->clear();
+        delete famResourceTable;
+    }
 }
 
 /*

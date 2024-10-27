@@ -93,8 +93,12 @@ Fam_Allocator_Client::Fam_Allocator_Client(bool isSharedMemory,
 
 Fam_Allocator_Client::~Fam_Allocator_Client() {
     delete famCIS;
+    famCIS =NULL;
     if (famResourceManager)
+    {
         delete famResourceManager;
+        famResourceManager = NULL;
+    }
 }
 
 void Fam_Allocator_Client::allocator_initialize() {}

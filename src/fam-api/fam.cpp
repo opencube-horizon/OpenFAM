@@ -149,15 +149,28 @@ class fam::Impl_ {
     }
 
     ~Impl_() {
-        if (ctxId == FAM_DEFAULT_CTX_ID) {
-            if (groupName)
-                free(groupName);
-            if (famOps)
-                delete (famOps);
-            if (famAllocator)
-                delete famAllocator;
-            if (famRuntime)
-                delete famRuntime;
+        if (ctxId == FAM_DEFAULT_CTX_ID) 
+        {
+
+            fam_free_pointers(
+                Fam_Ptr<char>(groupName, Fam_Allocator::MALLOC),
+                Fam_Ptr<Fam_Ops>(famOps, Fam_Allocator::NEW),
+                Fam_Ptr<Fam_Allocator_Client>(famAllocator, Fam_Allocator::NEW),
+                Fam_Ptr<Fam_Runtime>(famRuntime, Fam_Allocator::NEW)
+            );
+            if(ctxList)
+            {
+                for(fam_context * item : *ctxList)
+                {
+                    fam_free_pointers(
+                        Fam_Ptr<fam_context>(item, Fam_Allocator::NEW)
+                    );
+                }
+                fam_free_pointers(
+                        Fam_Ptr<std::list<fam_context *>>(ctxList, Fam_Allocator::NEW)
+                    );
+
+            }    
         }
     }
 
@@ -701,7 +714,7 @@ void fam::Impl_::fam_initialize(const char *grpName, Fam_Options *options) {
     configFileParams file_options;
     // Check for config file in or in path mentioned
     // by OPENFAM_ROOT environment variable or in /opt/OpenFAM.
-    config_file_path = find_config_file(strdup("fam_pe_config.yaml"));
+    config_file_path = find_config_file((char *)std::string("fam_pe_config.yaml").c_str());
     // Get the configuration info from the configruation file.
     if (!config_file_path.empty()) {
         file_options = get_info_from_config_file(config_file_path);
@@ -1095,47 +1108,51 @@ configFileParams fam::Impl_::get_info_from_config_file(std::string filename) {
             // validate_fam_options function.
         }
         try {
-            options["client_interface_type"] = (char *)strdup(
-                (info->get_key_value("client_interface_type")).c_str());
+            options["client_interface_type"] = std::string(info->get_key_value("client_interface_type"));
+            // (char *)strdup((info->get_key_value("client_interface_type")).c_str());
         } catch (Fam_InvalidOption_Exception &e) {
             // If the parameter client_interface_type is not present, then
             // ignore the exception. This parameter will be obtained from
             // validate_fam_options function.
         }
         try {
-            options["provider"] =
-                (char *)strdup((info->get_key_value("provider")).c_str());
+            options["provider"] = std::string(info->get_key_value("provider"));
+                // (char *)strdup((info->get_key_value("provider")).c_str());
         } catch (Fam_InvalidOption_Exception &e) {
             // If parameter is not present, then set the default.
-            options["provider"] = (char *)strdup("sockets");
+            options["provider"] = std::string("sockets");
+            //(char *)strdup("sockets");
         }
         // fetch rpc_framework type
         try {
-            options["rpc_framework_type"] = (char *)strdup(
-                (info->get_key_value("rpc_framework_type")).c_str());
+            options["rpc_framework_type"] = std::string(info->get_key_value("rpc_framework_type"));
+            //(char *)strdup((info->get_key_value("rpc_framework_type")).c_str());
         } catch (Fam_InvalidOption_Exception &e) {
             // If parameter is not present, then set the default.
-            options["rpc_framework_type"] = (char *)strdup("grpc");
+            options["rpc_framework_type"] = std::string("grpc");
+            //(char *)strdup("grpc");
         }
         try {
-            options["libfabricProvider"] =
-                (char *)strdup((info->get_key_value("provider")).c_str());
+            options["libfabricProvider"] = std::string(info->get_key_value("provider"));
+                //(char *)strdup((info->get_key_value("provider")).c_str());
         } catch (Fam_InvalidOption_Exception &e) {
             // If the parameter libfabricProvider is not present, then ignore
             // the exception. This parameter will be obtained from
             // validate_fam_options function.
         }
         try {
-            options["if_device"] =
-                (char *)strdup((info->get_key_value("if_device")).c_str());
+            options["if_device"] = std::string(info->get_key_value("if_device"));
+                //(char *)strdup((info->get_key_value("if_device")).c_str());
         } catch (Fam_InvalidOption_Exception &e) {
         }
 
         try {
             std::string famThreadModel = info->get_key_value("FamThreadModel");
             options["famThreadModel"] = ((famThreadModel.compare("single") == 0)
-                                             ? strdup(FAM_THREAD_SERIALIZE_STR)
-                                             : strdup(FAM_THREAD_MULTIPLE_STR));
+                                               ? std::string(FAM_THREAD_SERIALIZE_STR)
+                                               : std::string(FAM_THREAD_MULTIPLE_STR));
+                                             //? strdup(FAM_THREAD_SERIALIZE_STR)
+                                             //: strdup(FAM_THREAD_MULTIPLE_STR));
         } catch (Fam_InvalidOption_Exception &e) {
             // If the parameter famThreadModel is not present, then ignore the
             // exception. This parameter will be obtained from
@@ -1150,29 +1167,31 @@ configFileParams fam::Impl_::get_info_from_config_file(std::string filename) {
             // validate_fam_options function.
         }
         try {
-            options["runtime"] =
-                (char *)strdup((info->get_key_value("runtime")).c_str());
+            options["runtime"] = std::string(info->get_key_value("runtime"));
+                //(char *)strdup((info->get_key_value("runtime")).c_str());
         } catch (Fam_InvalidOption_Exception &e) {
             // If the parameter runtime is not present, then ignore the
             // exception. This parameter will be obtained from
             // validate_fam_options function.
         }
         try {
-            options["default_memory_type"] = (char *)strdup(
-                (info->get_key_value("default_memory_type")).c_str());
+            options["default_memory_type"] = std::string(info->get_key_value("default_memory_type"));
+            // (char *)strdup((info->get_key_value("default_memory_type")).c_str());
         } catch (Fam_InvalidOption_Exception &e) {
             // If the parameter runtime is not present, then ignore the
             // exception. This parameter will be obtained from
             // validate_fam_options function.
         }
         try {
-            options["resource_release"] = (char *)strdup(
-                (info->get_key_value("resource_release")).c_str());
+            options["resource_release"] = std::string(info->get_key_value("resource_release"));
+            //(char *)strdup((info->get_key_value("resource_release")).c_str());
         } catch (Fam_InvalidOption_Exception &e) {
             // If parameter is not present, then set the default.
-            options["resource_release"] = (char *)strdup("enable");
-        }
+            options["resource_release"] = std::string("enable");
+            // (char *)strdup("enable");
+        }   
     }
+    fam_free_pointers(Fam_Ptr<config_info>(info, Fam_Allocator::NEW));
     return options;
 }
 
